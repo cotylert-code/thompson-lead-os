@@ -67,6 +67,13 @@ const showings = [
   },
 ];
 
+const alerts = [
+  "Amanda needs a response now.",
+  "Natalie is showing-ready.",
+  "9 text goblins detected.",
+  "Showing route monitor standing by.",
+];
+
 function Card({
   children,
   className = "",
@@ -95,6 +102,7 @@ export default function Page() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
   const [tab, setTab] = useState("command");
+  const [intro, setIntro] = useState(true);
   const [jarvisOpen, setJarvisOpen] = useState(true);
 
   const hotLeads = useMemo(
@@ -141,14 +149,72 @@ export default function Page() {
             />
             <button
               onClick={() => {
-                if (password === PASSWORD) setLoggedIn(true);
-                else alert("Access denied, sir.");
+                if (password === PASSWORD) {
+                  setLoggedIn(true);
+                  setIntro(true);
+                } else {
+                  alert("Access denied, sir.");
+                }
               }}
               className="w-full rounded-2xl bg-emerald-600 px-4 py-3 font-semibold text-white hover:bg-emerald-500"
             >
               🔒 Initialize System
             </button>
           </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (intro) {
+    return (
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black p-4 text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,.22),transparent_30%),linear-gradient(180deg,#000,#03120d,#000)]" />
+        <div className="absolute h-[680px] w-[680px] rounded-full border border-emerald-400/20 shadow-[0_0_100px_rgba(16,185,129,.25)]" />
+        <div className="absolute h-[420px] w-[420px] rounded-full border border-cyan-400/20" />
+        <div className="absolute h-[220px] w-[220px] rounded-full border border-emerald-400/30" />
+
+        <div className="relative z-10 w-full max-w-3xl rounded-[38px] border border-emerald-500/30 bg-black/70 p-8 shadow-[0_0_100px_rgba(16,185,129,.22)] backdrop-blur-md">
+          <p className="text-xs uppercase tracking-[0.4em] text-emerald-300">
+            🤖 Jarvis boot sequence
+          </p>
+          <h1 className="mt-4 text-4xl font-bold md:text-6xl">
+            Good morning, Tyler.
+          </h1>
+
+          <div className="mt-6 space-y-4 text-lg leading-8 text-zinc-300">
+            <p>Systems are online. I monitored the board while you were away.</p>
+            <p>
+              Amanda is warming up, Natalie wants action, and the text goblins
+              appear to have multiplied overnight.
+            </p>
+            <p className="text-emerald-300">
+              Recommendation: deploy charm, secure showings, and do not let
+              Zillow leads wander into enemy territory.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-3 md:grid-cols-3">
+            <div className="rounded-2xl border border-emerald-400/20 bg-black/70 p-4">
+              <p className="text-sm text-zinc-400">Hot leads</p>
+              <p className="mt-2 text-3xl font-bold text-emerald-400">2</p>
+            </div>
+            <div className="rounded-2xl border border-emerald-400/20 bg-black/70 p-4">
+              <p className="text-sm text-zinc-400">Texts waiting</p>
+              <p className="mt-2 text-3xl font-bold">9</p>
+            </div>
+            <div className="rounded-2xl border border-emerald-400/20 bg-black/70 p-4">
+              <p className="text-sm text-zinc-400">Priority mission</p>
+              <p className="mt-2 text-xl font-bold text-cyan-300">Amanda</p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setIntro(false)}
+            className="mt-8 w-full rounded-2xl bg-emerald-600 px-5 py-4 font-semibold hover:bg-emerald-500"
+          >
+            Enter Command Center 🚀
+          </button>
         </div>
       </main>
     );
@@ -161,21 +227,28 @@ export default function Page() {
         <div className="absolute left-1/2 top-24 h-[620px] w-[620px] -translate-x-1/2 rounded-full border border-cyan-400/10" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl">
+      <div className="fixed left-0 right-0 top-0 z-40 border-b border-emerald-400/20 bg-black/80 px-4 py-2 text-sm text-emerald-300 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl gap-6 overflow-x-auto">
+          {alerts.map((alert) => (
+            <span key={alert}>⚡ {alert}</span>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative mx-auto mt-10 max-w-7xl">
         <section className="relative overflow-hidden rounded-[38px] border border-emerald-500/30 bg-black/60 p-6 shadow-[0_0_95px_rgba(16,185,129,.18)] backdrop-blur-md md:p-8">
           <div className="absolute right-8 top-8 hidden h-40 w-40 rounded-full border border-emerald-400/25 shadow-[0_0_70px_rgba(16,185,129,.25)] md:block" />
           <div className="absolute right-14 top-14 hidden h-28 w-28 rounded-full border border-cyan-400/20 md:block" />
 
           <p className="text-xs uppercase tracking-[0.35em] text-emerald-300">
-            🤖 Suit systems online
+            🤖 Jarvis is monitoring
           </p>
           <h1 className="mt-3 text-4xl font-bold md:text-6xl">
-            Good morning, Tyler.
+            Realtor Suit Online.
           </h1>
           <p className="mt-4 max-w-3xl text-zinc-400">
-            I monitored the pipeline while you were away. Lead heat is rising,
-            text goblins are multiplying, and Amanda is dangerously close to
-            touring without your top-three list.
+            I am watching leads, texts, showings, intent, and mission priority.
+            You work the business. I’ll keep the radar hot.
           </p>
         </section>
 
@@ -233,7 +306,7 @@ export default function Page() {
 
             <Card className="xl:row-span-2">
               <h2 className="text-2xl font-bold text-emerald-300">
-                Jarvis Live Feed
+                Live Jarvis Commentary
               </h2>
               <div className="mt-4 space-y-3 text-sm text-zinc-300">
                 <p>✅ Amanda viewed multiple homes. Follow-up recommended.</p>
@@ -339,9 +412,6 @@ export default function Page() {
                     <div>
                       <p className="font-semibold">{lead.name}</p>
                       <p className="text-sm text-zinc-400">{lead.alert}</p>
-                      <p className="mt-1 text-xs text-cyan-300">
-                        Window: {lead.window}
-                      </p>
                     </div>
                     <p className="text-3xl font-bold text-emerald-400">
                       {lead.score}
