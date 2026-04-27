@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
 const PASSWORD = "Baberuth4!";
 
@@ -11,10 +11,9 @@ const leads = [
     type: "Buyer",
     stage: "Ready to Tour",
     score: 94,
-    window: "0-2 months",
     priority: "Critical",
-    move: "Send top 3 Arvada homes and ask for tour window",
-    signal: "Viewed 9 homes · Saved 3 · Replied this morning",
+    move: "Send top 3 Arvada homes",
+    alert: "Viewed 9 homes and saved 3. She is circling the runway.",
   },
   {
     name: "Natalie Brooks",
@@ -22,10 +21,9 @@ const leads = [
     type: "Buyer",
     stage: "Pre-approved",
     score: 91,
-    window: "0-2 months",
     priority: "Hot",
     move: "Book Westminster showing today",
-    signal: "Asked to see a home today · lender letter ready",
+    alert: "Asked to see a home today. Do not fumble this, sir.",
   },
   {
     name: "Mr. Chavez",
@@ -33,70 +31,39 @@ const leads = [
     type: "Buyer",
     stage: "Re-engage",
     score: 78,
-    window: "2-6 months",
     priority: "Warm",
     move: "Soft weekend check-in",
-    signal: "Replied after 8 days quiet",
+    alert: "Replied after 8 days quiet. The door has reopened.",
   },
-  {
-    name: "Derek Mills",
-    source: "Personal",
-    type: "Seller",
-    stage: "Long-term nurture",
-    score: 66,
-    window: "6-12 months",
-    priority: "Nurture",
-    move: "Send home value update",
-    signal: "Possible equity / seller conversation",
-  },
-];
-
-const missed = [
-  "3 hot leads showed new activity while you were away.",
-  "Amanda is dangerously close to being ready for a showing.",
-  "Natalie asked about seeing a Westminster home today.",
-  "You have 9 text conversations waiting for your charm offensive.",
 ];
 
 const texts = [
   {
     name: "Amanda Carter",
     message: "Can you send me the top 3 homes in Arvada?",
-    status: "Reply fast",
     draft:
-      "Amanda — absolutely. I’ll send my top 3 and point out which ones are actually worth seeing in person.",
+      "Amanda — absolutely. I’ll send my top 3 and point out which ones I think are actually worth seeing in person.",
   },
   {
     name: "Natalie Brooks",
     message: "Can we see that Westminster one today?",
-    status: "Hot",
     draft:
       "Yes — I’ll check availability right now and try to get us in today. What time window works best?",
   },
-  {
-    name: "Mr. Chavez",
-    message: "Still interested, just busy. Maybe next weekend?",
-    status: "Needs reply",
-    draft:
-      "Totally understand sir. Next weekend works — I’ll keep an eye out and send you the best options before they move.",
-  },
 ];
 
-const calendar = [
-  {
-    time: "9:00 AM",
-    title: "Lead follow-up sprint",
-    note: "Jarvis recommends coffee and no excuses.",
-  },
+const showings = [
   {
     time: "1:00 PM",
     title: "Showing · 123 Maple St",
-    note: "Leave by 12:32 PM · 22 min ETA",
+    eta: "22 min",
+    leave: "12:32 PM",
   },
   {
     time: "3:30 PM",
     title: "Showing · 88 W 44th Ave",
-    note: "Leave by 3:08 PM · 17 min ETA",
+    eta: "17 min",
+    leave: "3:08 PM",
   },
 ];
 
@@ -104,7 +71,7 @@ function Card({
   children,
   className = "",
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }) {
   return (
@@ -116,7 +83,7 @@ function Card({
   );
 }
 
-function Badge({ children }: { children: React.ReactNode }) {
+function Badge({ children }: { children: ReactNode }) {
   return (
     <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300">
       {children}
@@ -128,6 +95,7 @@ export default function Page() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
   const [tab, setTab] = useState("command");
+  const [jarvisOpen, setJarvisOpen] = useState(true);
 
   const hotLeads = useMemo(
     () => leads.filter((lead) => lead.score >= 85).length,
@@ -144,6 +112,7 @@ export default function Page() {
         }}
       >
         <div className="absolute inset-0 bg-black/50" />
+
         <div className="relative z-10 w-full max-w-md rounded-[34px] border border-emerald-500/30 bg-black/75 p-8 text-white shadow-[0_0_80px_rgba(16,185,129,.22)] backdrop-blur-md">
           <div className="text-center">
             <div className="mb-4 text-5xl">🏔️</div>
@@ -180,19 +149,19 @@ export default function Page() {
               🔒 Initialize System
             </button>
           </div>
-
-          <p className="mt-5 rounded-2xl border border-zinc-800 bg-black/60 p-4 text-xs leading-6 text-zinc-400">
-            Real authentication and private data connections come before client
-            data goes live.
-          </p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,.22),transparent_24%),radial-gradient(circle_at_right,rgba(34,211,238,.14),transparent_25%),radial-gradient(circle_at_bottom,rgba(250,204,21,.08),transparent_24%),linear-gradient(180deg,#000,#03120d,#000)] p-3 pb-20 text-white md:p-8">
-      <div className="mx-auto max-w-7xl">
+    <main className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,.22),transparent_24%),radial-gradient(circle_at_right,rgba(34,211,238,.14),transparent_25%),linear-gradient(180deg,#000,#03120d,#000)] p-3 pb-24 text-white md:p-8">
+      <div className="pointer-events-none fixed inset-0 opacity-20">
+        <div className="absolute left-1/2 top-0 h-[900px] w-[900px] -translate-x-1/2 rounded-full border border-emerald-400/20" />
+        <div className="absolute left-1/2 top-24 h-[620px] w-[620px] -translate-x-1/2 rounded-full border border-cyan-400/10" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl">
         <section className="relative overflow-hidden rounded-[38px] border border-emerald-500/30 bg-black/60 p-6 shadow-[0_0_95px_rgba(16,185,129,.18)] backdrop-blur-md md:p-8">
           <div className="absolute right-8 top-8 hidden h-40 w-40 rounded-full border border-emerald-400/25 shadow-[0_0_70px_rgba(16,185,129,.25)] md:block" />
           <div className="absolute right-14 top-14 hidden h-28 w-28 rounded-full border border-cyan-400/20 md:block" />
@@ -204,16 +173,15 @@ export default function Page() {
             Good morning, Tyler.
           </h1>
           <p className="mt-4 max-w-3xl text-zinc-400">
-            While you were away, the lead radar stayed active. Zillow hunters
-            detected. Text goblins multiplying. Recommendation: deploy charm
-            before another agent tries something brave.
+            I monitored the pipeline while you were away. Lead heat is rising,
+            text goblins are multiplying, and Amanda is dangerously close to
+            touring without your top-three list.
           </p>
         </section>
 
         <div className="mt-5 flex gap-2 overflow-x-auto rounded-3xl border border-emerald-500/20 bg-black/60 p-2 backdrop-blur-md">
           {[
             ["command", "🛰️ Command"],
-            ["briefing", "🧠 Briefing"],
             ["texts", "💬 Texts"],
             ["showings", "🚗 Showings"],
             ["intent", "🔥 Intent"],
@@ -250,7 +218,7 @@ export default function Page() {
                 <p className="text-zinc-400">Texts Waiting</p>
                 <p className="mt-2 text-4xl font-bold">9</p>
                 <p className="mt-1 text-sm text-zinc-500">
-                  Tiny inbox goblins.
+                  Tiny inbox goblins detected.
                 </p>
               </Card>
 
@@ -265,12 +233,13 @@ export default function Page() {
 
             <Card className="xl:row-span-2">
               <h2 className="text-2xl font-bold text-emerald-300">
-                Jarvis Briefing
+                Jarvis Live Feed
               </h2>
               <div className="mt-4 space-y-3 text-sm text-zinc-300">
-                {missed.map((item) => (
-                  <p key={item}>✅ {item}</p>
-                ))}
+                <p>✅ Amanda viewed multiple homes. Follow-up recommended.</p>
+                <p>🚗 Showing route monitor waiting for Google Maps hookup.</p>
+                <p>💬 Natalie’s text is high-priority. Delay is unwise, sir.</p>
+                <p>🏡 Buyer intent engine online in preview mode.</p>
                 <p>🥷 Optional mission: silently dominate follow-up game.</p>
               </div>
             </Card>
@@ -295,6 +264,7 @@ export default function Page() {
                     <p className="mt-3 text-sm text-emerald-300">
                       Next move: {lead.move}
                     </p>
+                    <p className="mt-2 text-xs text-zinc-500">{lead.alert}</p>
                   </div>
                 ))}
               </div>
@@ -303,32 +273,14 @@ export default function Page() {
             <Card>
               <h2 className="text-2xl font-bold">Today’s Mission ✅</h2>
               <div className="mt-4 space-y-3 text-sm text-zinc-300">
-                <p>💬 Text Amanda back before your coffee gets cold.</p>
-                <p>📞 Call Natalie and book today’s showing.</p>
-                <p>🏠 Confirm 1:00 PM showing route.</p>
+                <p>💬 Text Amanda before your coffee gets cold.</p>
+                <p>📞 Call Natalie and lock the showing window.</p>
+                <p>🏠 Confirm 1:00 PM route.</p>
                 <p>✉️ Reply to lender email.</p>
                 <p>🤖 Let Jarvis draft, you approve.</p>
               </div>
             </Card>
           </div>
-        )}
-
-        {tab === "briefing" && (
-          <Card className="mt-5">
-            <h2 className="text-3xl font-bold text-emerald-300">
-              Here’s what you missed, sir.
-            </h2>
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
-              {missed.map((item) => (
-                <div
-                  key={item}
-                  className="rounded-2xl border border-zinc-800 bg-black/70 p-4"
-                >
-                  <p className="text-zinc-300">{item}</p>
-                </div>
-              ))}
-            </div>
-          </Card>
         )}
 
         {tab === "texts" && (
@@ -342,7 +294,7 @@ export default function Page() {
                 >
                   <div className="flex justify-between gap-3">
                     <p className="font-semibold">{text.name}</p>
-                    <Badge>{text.status}</Badge>
+                    <Badge>Needs action</Badge>
                   </div>
                   <p className="mt-2 text-zinc-300">“{text.message}”</p>
                   <p className="mt-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-sm text-zinc-300">
@@ -358,14 +310,16 @@ export default function Page() {
           <Card className="mt-5">
             <h2 className="text-2xl font-bold">Showing Navigation 🚗</h2>
             <div className="mt-4 space-y-3">
-              {calendar.map((event) => (
+              {showings.map((event) => (
                 <div
                   key={event.title}
                   className="rounded-2xl border border-zinc-800 bg-black/70 p-4"
                 >
                   <p className="text-cyan-300">{event.time}</p>
                   <p className="font-semibold">{event.title}</p>
-                  <p className="text-sm text-zinc-400">{event.note}</p>
+                  <p className="text-sm text-zinc-400">
+                    ETA: {event.eta} · Leave by {event.leave}
+                  </p>
                 </div>
               ))}
             </div>
@@ -384,7 +338,7 @@ export default function Page() {
                   <div className="flex items-center justify-between gap-4">
                     <div>
                       <p className="font-semibold">{lead.name}</p>
-                      <p className="text-sm text-zinc-400">{lead.signal}</p>
+                      <p className="text-sm text-zinc-400">{lead.alert}</p>
                       <p className="mt-1 text-xs text-cyan-300">
                         Window: {lead.window}
                       </p>
@@ -403,7 +357,7 @@ export default function Page() {
           <Card className="mt-5">
             <h2 className="text-2xl font-bold">Settings ⚙️</h2>
             <p className="mt-3 text-zinc-400">
-              Next: real auth, Follow Up Boss API, Google Calendar, Gmail, Maps
+              Next: real auth, Follow Up Boss API, Gmail, Google Calendar, Maps
               ETA, and Jarvis voice-learning drafts.
             </p>
             <button
@@ -415,6 +369,29 @@ export default function Page() {
           </Card>
         )}
       </div>
+
+      <button
+        onClick={() => setJarvisOpen(!jarvisOpen)}
+        className="fixed bottom-5 right-5 z-50 flex h-16 w-16 items-center justify-center rounded-full border border-emerald-400/40 bg-black/80 text-3xl shadow-[0_0_45px_rgba(16,185,129,.45)] backdrop-blur-md"
+      >
+        🤖
+      </button>
+
+      {jarvisOpen && (
+        <div className="fixed bottom-24 right-5 z-50 w-[92vw] max-w-sm rounded-[28px] border border-emerald-400/30 bg-black/85 p-5 text-white shadow-[0_0_70px_rgba(16,185,129,.28)] backdrop-blur-md">
+          <p className="text-xs uppercase tracking-[0.3em] text-emerald-300">
+            Jarvis watching
+          </p>
+          <h3 className="mt-2 text-xl font-bold">I’m monitoring the board.</h3>
+          <p className="mt-3 text-sm leading-6 text-zinc-300">
+            Sir, Amanda is hot, Natalie needs speed, and the text goblins are
+            not going to answer themselves.
+          </p>
+          <div className="mt-4 rounded-2xl border border-zinc-800 bg-black p-3 text-sm text-zinc-300">
+            Ask Jarvis: “Who should I call right now?”
+          </div>
+        </div>
+      )}
     </main>
   );
 }
